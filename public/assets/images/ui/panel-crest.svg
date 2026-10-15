@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Krone/Zacken oben an Dialog-Panels -->
+  <path d="M160 2 L168 38 L160 46 L152 38 Z" fill="#fff" stroke-width="1"/>
+  <g id="side">
+    <path d="M176 40 L188 16 L194 42" stroke-width="1.6"/>
+    <path d="M200 44 L208 28 L213 46" stroke-width="1.4"/>
+    <path d="M168 50 Q220 46 260 50 Q290 53 300 46 Q306 41 312 44 Q318 48 312 53 Q307 56 304 52" stroke-width="1.6"/>
+    <circle cx="232" cy="49" r="1.4" fill="#fff" stroke="none"/>
+  </g>
+  <use href="#side" transform="translate(320 0) scale(-1 1)"/>
+</svg>

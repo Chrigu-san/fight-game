@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 28" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Zeiger neben dem ausgewählten Menüpunkt (zeigt nach rechts) -->
+  <path d="M62 14 L26 12.6 Q17 12 13 7.5 Q10 3.5 6 4.5 Q2 6 3 10 Q4.5 13.5 8.5 11.5" stroke-width="1.6"/>
+  <path d="M62 14 L26 15.4 Q17 16 13 20.5 Q10 24.5 6 23.5 Q2 22 3 18 Q4.5 14.5 8.5 16.5" stroke-width="1.6"/>
+  <path d="M62 14 L30 14" stroke-width="1"/>
+  <path d="M20 14 L23.5 11 L27 14 L23.5 17 Z" fill="#fff" stroke-width="0.8"/>
+  <circle cx="15" cy="14" r="1.3" fill="#fff" stroke="none"/>
+</svg>

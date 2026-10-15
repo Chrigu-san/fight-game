@@ -1,2 +1,129 @@
-<p>menu works!</p>
-<a routerLink="/game">Start</a>
+<div class="vignette"></div>
+
+<div class="particles" aria-hidden="true">
+  @for (p of particles; track $index) {
+    <span
+      class="particle"
+      [style.left.%]="p.left"
+      [style.width.px]="p.size"
+      [style.height.px]="p.size"
+      [style.animation-duration.s]="p.duration"
+      [style.animation-delay.s]="p.delay"
+      [style.--drift]="p.drift + 'px'"
+    ></span>
+  }
+</div>
+
+<main class="menu" [class.dimmed]="panel() !== 'none'">
+  <header class="title">
+    <h1>Fight Game</h1>
+    <img class="title-ornament" src="assets/images/ui/title-ornament.svg" alt="" />
+  </header>
+
+  <nav class="items">
+    @for (item of items; track item.label; let i = $index) {
+      <button
+        type="button"
+        class="item"
+        [class.selected]="selected() === i"
+        (mouseenter)="selected.set(i)"
+        (focus)="selected.set(i)"
+        (click)="select(i)"
+      >
+        <img class="fleur left" src="assets/images/ui/menu-fleur.svg" alt="" />
+        <span class="label">{{ item.label }}</span>
+        <img class="fleur right" src="assets/images/ui/menu-fleur.svg" alt="" />
+      </button>
+    }
+  </nav>
+
+</main>
+
+@if (panel() !== 'none') {
+  <div class="overlay" (click)="closePanel()">
+    <section class="panel" [class.wide]="panel() === 'terms'" (click)="$event.stopPropagation()">
+      <img class="crest" src="assets/images/ui/panel-crest.svg" alt="" />
+
+      @switch (panel()) {
+        @case ('settings') {
+          <h2>Einstellungen</h2>
+          <img class="divider" src="assets/images/ui/divider.svg" alt="" />
+
+          <div class="setting">
+            <label for="master">Gesamtlautstärke</label>
+            <input id="master" type="range" min="0" max="100"
+              [value]="settings.values().masterVolume" (input)="setVolume('masterVolume', $event)" />
+            <span class="value">{{ settings.values().masterVolume }}</span>
+          </div>
+          <div class="setting">
+            <label for="music">Musik</label>
+            <input id="music" type="range" min="0" max="100"
+              [value]="settings.values().musicVolume" (input)="setVolume('musicVolume', $event)" />
+            <span class="value">{{ settings.values().musicVolume }}</span>
+          </div>
+          <div class="setting">
+            <label for="sfx">Effekte</label>
+            <input id="sfx" type="range" min="0" max="100"
+              [value]="settings.values().sfxVolume" (input)="setVolume('sfxVolume', $event)" />
+            <span class="value">{{ settings.values().sfxVolume }}</span>
+          </div>
+          <div class="setting">
+            <span class="label-text">Bildschirmwackeln</span>
+            <button type="button" class="toggle" (click)="toggle('screenShake')">
+              {{ settings.values().screenShake ? 'An' : 'Aus' }}
+            </button>
+          </div>
+          <div class="setting">
+            <span class="label-text">FPS anzeigen</span>
+            <button type="button" class="toggle" (click)="toggle('showFps')">
+              {{ settings.values().showFps ? 'An' : 'Aus' }}
+            </button>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="action" (click)="settings.reset()">Zurücksetzen</button>
+            <button type="button" class="action" (click)="closePanel()">Zurück</button>
+          </div>
+        }
+
+        @case ('terms') {
+          <h2>Nutzungsbedingungen</h2>
+          <img class="divider" src="assets/images/ui/divider.svg" alt="" />
+
+          <div class="terms">
+            <h3>1. Geltungsbereich</h3>
+            <p>Diese Bedingungen gelten für die Nutzung von Fight Game. Mit dem Start des Spiels erklärst du dich damit einverstanden.</p>
+            <h3>2. Fairplay</h3>
+            <p>Cheats, Bots oder das Ausnutzen von Fehlern sind nicht erlaubt. Verhalte dich gegenüber anderen Spielern respektvoll.</p>
+            <h3>3. Spielername</h3>
+            <p>Beleidigende, diskriminierende oder irreführende Namen sind verboten und können entfernt werden.</p>
+            <h3>4. Daten</h3>
+            <p>Einstellungen werden lokal in deinem Browser gespeichert. Für Online-Partien werden nur die für das Spiel nötigen Daten übertragen.</p>
+            <h3>5. Haftung</h3>
+            <p>Das Spiel wird ohne Gewähr bereitgestellt. Es besteht kein Anspruch auf ständige Verfügbarkeit.</p>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="action" (click)="closePanel()">Zurück</button>
+          </div>
+        }
+
+        @case ('quit') {
+          <h2>Spiel beenden?</h2>
+          <img class="divider" src="assets/images/ui/divider.svg" alt="" />
+
+          @if (closeFailed()) {
+            <p class="message">Der Browser lässt das Fenster nicht automatisch schliessen. Du kannst diesen Tab jetzt einfach schliessen.</p>
+          } @else {
+            <p class="message">Möchtest du das Spiel wirklich verlassen?</p>
+          }
+
+          <div class="actions">
+            <button type="button" class="action" (click)="quitGame()">Ja</button>
+            <button type="button" class="action" (click)="closePanel()">Nein</button>
+          </div>
+        }
+      }
+    </section>
+  </div>
+}

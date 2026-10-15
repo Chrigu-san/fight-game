@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 44" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Verzierung unter dem Titel -->
+  <path d="M240 6 L252 22 L240 38 L228 22 Z" fill="#fff" stroke-width="1"/>
+  <path d="M240 13 L246 22 L240 31 L234 22 Z" fill="#0a0d14" stroke="none"/>
+  <g id="half">
+    <path d="M258 22 L420 20.5 Q440 20 448 14 Q455 8 462 11 Q469 15 465 21 Q461 26 455 23 Q451 20 454 17" stroke-width="1.6"/>
+    <path d="M258 22 L420 23.5 Q438 24 444 29 Q449 33 446 36" stroke-width="1.2"/>
+    <path d="M262 22 L380 22" stroke-width="0.8" opacity="0.6"/>
+    <circle cx="300" cy="22" r="1.6" fill="#fff" stroke="none"/>
+    <circle cx="352" cy="22" r="1.2" fill="#fff" stroke="none"/>
+    <path d="M396 22 L401 18 L406 22 L401 26 Z" fill="#fff" stroke-width="0.6"/>
+  </g>
+  <use href="#half" transform="translate(480 0) scale(-1 1)"/>
+</svg>
