@@ -2,5 +2,25 @@
      [style.--x.px]="x"
      [style.--y.px]="y"
      [style.--width]="width"
-     [style.--height.px]="height">
+     [style.--height.px]="height"
+     [style.--px]="pixel() + 'px'">
+  <div class="contact-shadow"></div>
+  <div class="ledge"></div>
+  <div class="bricks"></div>
+
+  @for (torch of torches(); track $index) {
+    <div class="torch-light" [style.left.px]="torch.left" [style.animation-delay.s]="torch.delay">
+      <div class="ledge-glow"></div>
+    </div>
+    @for (ember of embers; track $index) {
+      <span
+        class="ember"
+        [style.left.px]="torch.left + ember.offset"
+        [style.animation-duration.s]="ember.duration"
+        [style.animation-delay.s]="ember.delay"
+      ></span>
+    }
+  }
+
+  <div class="depth"></div>
 </div>

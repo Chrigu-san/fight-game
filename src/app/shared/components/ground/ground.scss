@@ -1,3 +1,14 @@
+// Farben aus dem Hintergrundbild (Steinboden, Fackellicht)
+$ledge-top: #6a6773;
+$ledge: #46444f;
+$ledge-dark: #2a2933;
+$torch: #ff963c;
+
+// Pixelgrösse kommt aus der Komponente, passend zur Skalierung des Hintergrunds
+@function px($n) {
+  @return calc(var(--px) * #{$n});
+}
+
 :host {
   position: fixed;
   left: 0;
@@ -11,5 +22,129 @@
   bottom: var(--y);
   width: var(--width);
   height: var(--height);
-  background: gray;
+  background: #121319;
+  image-rendering: pixelated;
+}
+
+// Dunkle Übergangskante zur Wand, damit der Boden "auf" der Szene liegt
+.contact-shadow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 28px;
+  background: linear-gradient(to top, rgba(5, 6, 10, 0.7), transparent);
+  pointer-events: none;
+}
+
+// Begehbare Steinplatten oben: hellere Kante, Fugen alle 24 Pixel
+.ledge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: px(5);
+  background:
+    repeating-linear-gradient(to right, transparent 0 px(23), $ledge-dark px(23) px(24)),
+    linear-gradient(
+      to bottom,
+      $ledge-top 0 px(1),
+      $ledge px(1) px(3),
+      #3a3843 px(3) px(4),
+      $ledge-dark px(4)
+    );
+}
+
+// Mauerwerk unter der Kante
+.bricks {
+  position: absolute;
+  top: px(5);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/assets/images/ground/stone-tile.svg') repeat left top / px(64) px(16);
+}
+
+// Warmer Lichtkegel unter jeder Fackel im Hintergrund
+.torch-light {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: px(120);
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse 50% 90% at 50% 0%,
+    rgba($torch, 0.5),
+    rgba($torch, 0.16) 50%,
+    transparent 75%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: flicker 2.4s ease-in-out infinite;
+
+  .ledge-glow {
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: px(1);
+    background: linear-gradient(to right, transparent, rgba(255, 200, 130, 0.95), transparent);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  35% {
+    opacity: 0.95;
+  }
+  60% {
+    opacity: 0.75;
+  }
+  80% {
+    opacity: 0.9;
+  }
+}
+
+// Glutfunken, die vom Boden aufsteigen
+.ember {
+  position: absolute;
+  top: 0;
+  width: var(--px);
+  height: var(--px);
+  background: #ffb35a;
+  box-shadow: 0 0 6px 1px rgba($torch, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  animation: ember-rise linear infinite;
+}
+
+@keyframes ember-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(px(6), px(-40));
+    opacity: 0;
+  }
+}
+
+// Nach unten hin dunkler, damit der Boden Tiefe bekommt
+.depth {
+  position: absolute;
+  top: px(5);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(5, 6, 10, 0.05), rgba(5, 6, 10, 0.85));
+  pointer-events: none;
 }
