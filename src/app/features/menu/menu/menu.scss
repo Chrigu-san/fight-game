@@ -1,7 +1,6 @@
 $text: #f2f0ea;
 $text-dim: rgba(242, 240, 234, 0.55);
 $glow: rgba(200, 220, 255, 0.55);
-$panel-bg: rgba(6, 8, 14, 0.92);
 
 :host {
   position: fixed;
@@ -66,12 +65,6 @@ $panel-bg: rgba(6, 8, 14, 0.92);
   justify-content: center;
   gap: 3.5rem;
   animation: fade-in 1.6s ease-out both;
-  transition: opacity 0.3s, filter 0.3s;
-
-  &.dimmed {
-    opacity: 0.25;
-    filter: blur(2px);
-  }
 
   @media (max-width: 800px) {
     width: 100%;
@@ -173,113 +166,102 @@ $panel-bg: rgba(6, 8, 14, 0.92);
   }
 }
 
-.hint {
-  margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  color: rgba(242, 240, 234, 0.35);
-}
-
-// Dialoge für Einstellungen, Nutzungsbedingungen und Beenden
-.overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.5);
-  animation: fade-in 0.3s ease-out both;
-}
-
-.panel {
-  position: relative;
-  width: min(100%, 520px);
-  max-height: calc(100vh - 32px);
+// Unterseiten (Einstellungen, Nutzungsbedingungen, Beenden) in derselben Spalte wie das Menü
+.subpage {
+  width: min(100%, 640px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 3.2rem 2.2rem 2rem;
-  background: $panel-bg;
-  border: 1px solid rgba(242, 240, 234, 0.35);
-  box-shadow:
-    0 0 0 4px rgba(0, 0, 0, 0.6),
-    0 0 40px rgba(120, 150, 220, 0.15);
+  padding: 0 16px;
+  animation: fade-in 0.45s ease-out both;
 
   &.wide {
-    width: min(100%, 680px);
-  }
-
-  .crest {
-    position: absolute;
-    top: -34px;
-    width: 240px;
-    filter: drop-shadow(0 0 6px $glow);
+    width: min(100%, 720px);
   }
 
   h2 {
     margin: 0;
-    font-size: 1.8rem;
-    letter-spacing: 0.12em;
-    text-shadow: 0 0 12px $glow;
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow:
+      0 0 18px $glow,
+      0 0 40px rgba(120, 150, 220, 0.3);
   }
 
   .divider {
-    width: 70%;
-    margin: 0.8rem 0 1.6rem;
-    opacity: 0.8;
+    width: min(70%, 360px);
+    margin: 0.8rem 0 1.8rem;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 6px $glow);
+  }
+
+  .items {
+    margin-top: 1.4rem;
   }
 }
 
-.setting {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1.2fr 2.5rem;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.55rem 0;
-  font-size: 1rem;
+// Einstellungszeile: Name links, Regler/Wert rechts, gleiche Zierlilien wie im Menü
+.item.setting {
+  font-size: clamp(1rem, 1.7vw, 1.25rem);
 
-  label,
-  .label-text {
-    color: $text-dim;
+  .name {
+    min-width: 11rem;
+    text-align: right;
+  }
+
+  .control {
+    min-width: 13rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    color: $text;
   }
 
   .value {
+    min-width: 2.2rem;
     text-align: right;
     font-variant-numeric: tabular-nums;
   }
 
-  .toggle {
-    grid-column: 2 / 4;
-    justify-self: start;
-    min-width: 5rem;
-    padding: 0.25rem 0.8rem;
-    background: none;
-    border: 1px solid rgba(242, 240, 234, 0.4);
-    color: $text;
-    font: inherit;
-    cursor: pointer;
-
-    &:hover {
-      border-color: $text;
-      text-shadow: 0 0 8px $glow;
-    }
-  }
-
   input[type='range'] {
-    width: 100%;
+    width: 160px;
     accent-color: $text;
     cursor: pointer;
+  }
+
+  @media (max-width: 600px) {
+    .name {
+      min-width: 0;
+    }
+
+    .control {
+      min-width: 0;
+    }
+
+    input[type='range'] {
+      width: 90px;
+    }
   }
 }
 
 .terms {
   width: 100%;
+  max-height: 42vh;
   overflow-y: auto;
-  padding-right: 0.5rem;
+  padding-right: 0.8rem;
   font-family: Georgia, serif;
   line-height: 1.55;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(242, 240, 234, 0.35);
+  }
 
   h3 {
     margin: 1.1rem 0 0.3rem;
@@ -300,32 +282,8 @@ $panel-bg: rgba(6, 8, 14, 0.92);
 
 .message {
   margin: 0;
+  max-width: 28rem;
   text-align: center;
   line-height: 1.5;
   color: $text-dim;
-}
-
-.actions {
-  display: flex;
-  gap: 2.5rem;
-  margin-top: 2rem;
-}
-
-.action {
-  background: none;
-  border: none;
-  padding: 0.2rem 0.4rem;
-  font: inherit;
-  font-size: 1.15rem;
-  letter-spacing: 0.08em;
-  color: $text-dim;
-  cursor: pointer;
-  transition: color 0.2s, text-shadow 0.2s;
-
-  &:hover,
-  &:focus-visible {
-    outline: none;
-    color: $text;
-    text-shadow: 0 0 12px $glow;
-  }
 }

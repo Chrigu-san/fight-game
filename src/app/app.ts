@@ -9,5 +9,5 @@ import { Background } from './shared/components/background/background';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('fight-game');
+  protected readonly title = signal('Yahu Arena');
 }
