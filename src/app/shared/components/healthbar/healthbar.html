@@ -1,1 +1,7 @@
-<p>healthbar works!</p>
+<div class="healthbar" [class.right]="side() === 'right'" [class.low]="low()">
+  <span class="name">{{ name() }}</span>
+  <div class="bar">
+    <div class="lag" [style.width.%]="percent()"></div>
+    <div class="fill" [style.width.%]="percent()"></div>
+  </div>
+</div>

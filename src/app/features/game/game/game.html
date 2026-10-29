@@ -1,1 +1,71 @@
-<app-ground />
+<div class="stage" [class.shake]="shake()">
+  <app-ground />
+
+  @for (p of view().players; track $index) {
+    <div
+      class="fighter"
+      [class.p2]="$index === 1"
+      [class.attacking]="p.attacking"
+      [class.blocking]="p.blocking"
+      [class.dashing]="p.dashing"
+      [class.hurt]="p.hurt"
+      [class.dead]="p.dead"
+      [style.left.px]="p.x"
+      [style.bottom.px]="floor() + p.y"
+      [style.width.px]="p.width"
+      [style.height.px]="p.height"
+      [style.--dir]="p.facing === 'left' ? -1 : 1"
+    >
+      <span class="tag">P{{ $index + 1 }}</span>
+      <img class="sprite" src="/assets/images/sprites/knight.svg" alt="" />
+      <span class="shadow" [style.bottom.px]="-p.y"></span>
+    </div>
+
+    @if (p.attackBox; as box) {
+      <div
+        class="slash"
+        [style.left.px]="box.x"
+        [style.bottom.px]="floor() + box.y"
+        [style.width.px]="box.width"
+        [style.height.px]="box.height"
+        [style.--dir]="p.facing === 'left' ? -1 : 1"
+      ></div>
+    }
+  }
+</div>
+
+<header class="hud">
+  <app-healthbar name="Spieler 1" [hp]="view().players[0].hp" [maxHp]="view().players[0].maxHp" side="left" />
+  <div class="timer">{{ view().timeLeft }}</div>
+  <app-healthbar name="Spieler 2" [hp]="view().players[1].hp" [maxHp]="view().players[1].maxHp" side="right" />
+</header>
+
+@if (view().phase === 'countdown') {
+  <div class="banner">Bereit?</div>
+}
+@if (view().showFightBanner) {
+  <div class="banner fight">Kampf!</div>
+}
+
+@if (view().phase === 'ko' || view().phase === 'timeout') {
+  <div class="result">
+    <h2>{{ view().phase === 'ko' ? 'K.O.' : 'Zeit abgelaufen' }}</h2>
+    <p class="winner">
+      @if (view().winner; as winner) {
+        Spieler {{ winner }} gewinnt
+      } @else {
+        Unentschieden
+      }
+    </p>
+    <p class="hint">Enter: Nochmal · Esc: Menü</p>
+  </div>
+}
+
+@if (settings.values().showFps) {
+  <div class="fps">{{ fps() }} FPS</div>
+}
+
+<footer class="controls">
+  <span><b>P1</b> A/D laufen · W springen · S blocken · F schlagen · G dash</span>
+  <span><b>P2</b> ←/→ laufen · ↑ springen · ↓ blocken · . schlagen · - dash</span>
+</footer>
