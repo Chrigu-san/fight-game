@@ -37,6 +37,14 @@ $p2: #4f8fe8;
   }
 }
 
+// Arena mit fester Breite; ihre Unterkante liegt auf dem Boden und sie wird von dort aus skaliert
+.world {
+  position: absolute;
+  left: 0;
+  height: 0;
+  transform-origin: 0 100%;
+}
+
 // Die Box ist die Trefferzone, das Bild ist etwas breiter und steht unten in der Mitte
 .fighter {
   position: absolute;
@@ -66,6 +74,7 @@ $p2: #4f8fe8;
     letter-spacing: 0.1em;
     color: $p1;
     text-shadow: 0 0 8px rgba($p1, 0.7);
+    white-space: nowrap;
   }
 
   .shadow {
@@ -87,6 +96,11 @@ $p2: #4f8fe8;
     .shadow {
       background: radial-gradient(rgba($p2, 0.45), transparent 70%);
     }
+  }
+
+  .tag.me {
+    color: #ffd27a;
+    text-shadow: 0 0 8px rgba(255, 180, 80, 0.7);
   }
 
   &.attacking .sprite {

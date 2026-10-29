@@ -130,12 +130,16 @@ export class Player {
 
     const onGround = this.isOnGround();
     const canAct = !this.dead && this.hitstun === 0;
+    const direction = (controls.right ? 1 : 0) - (controls.left ? 1 : 0);
+    const inputFacing: Facing | null = direction < 0 ? 'left' : direction > 0 ? 'right' : null;
 
     if (canAct) {
+      // Blickrichtung folgt der Laufrichtung, so kann man in beide Richtungen schlagen, blocken und dashen
+      if (inputFacing && !this.attacking && !this.dashing) this.setFacing(inputFacing);
       this.setBlocking(controls.block && onGround && !this.attacking && !this.dashing);
       if (controls.attack && !this.blocking) this.hit();
       if (controls.jump && onGround && !this.blocking) this.jump();
-      if (controls.dash && !this.blocking) this.dash();
+      if (controls.dash && !this.blocking) this.dash(inputFacing ?? this.facing);
     } else {
       this.setBlocking(false);
     }
@@ -150,7 +154,6 @@ export class Player {
         this.setSpeedX(this.speedX * 0.3);
       }
     } else {
-      const direction = (controls.right ? 1 : 0) - (controls.left ? 1 : 0);
       const canMove = canAct && !this.blocking && !(this.attacking && onGround);
       const targetSpeed = canMove ? direction * MOVE_SPEED : 0;
       // In der Luft lässt sich weniger stark lenken als am Boden
@@ -178,14 +181,6 @@ export class Player {
       this.posX = Math.min(maxX, Math.max(0, this.posX));
       this.speedX = 0;
     }
-  }
-
-  // Dreht sich zum Gegner, ausser mitten in einer Aktion
-  faceTowards(otherCenterX: number) {
-    if (this.dead || this.attacking || this.dashing || this.hitstun > 0 || !this.isOnGround()) {
-      return;
-    }
-    this.setFacing(otherCenterX < this.getCenterX() ? 'left' : 'right');
   }
 
   takeDamage(damage: number) {
@@ -249,14 +244,15 @@ export class Player {
     this.setSpeedY(knockbackY);
   }
 
-  dash() {
+  dash(direction: Facing = this.facing) {
     if (this.isDead() || this.isDashing() || this.dashCooldown > 0) {
       return;
     }
+    this.setFacing(direction);
     this.setDashing(true);
     this.dashTimer = DASH_TIME;
     this.dashCooldown = DASH_COOLDOWN;
-    this.setSpeedX(this.getFacing() === 'left' ? -DASH_SPEED : DASH_SPEED);
+    this.setSpeedX(direction === 'left' ? -DASH_SPEED : DASH_SPEED);
   }
 
   // Trefferzone des Schlags, nur im aktiven Teil und nur bis zum ersten Treffer

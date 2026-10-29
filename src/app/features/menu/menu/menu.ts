@@ -2,7 +2,7 @@ import { Component, HostListener, computed, inject, signal } from '@angular/core
 import { Router } from '@angular/router';
 import { GameSettings, Settings } from '../../../core/services/settings';
 
-type Panel = 'none' | 'settings' | 'terms' | 'quit';
+type Panel = 'none' | 'play' | 'settings' | 'terms' | 'quit';
 type SliderKey = 'masterVolume' | 'musicVolume' | 'sfxVolume';
 type ToggleKey = 'showFps' | 'screenShake';
 
@@ -32,7 +32,7 @@ export class Menu {
   private lastMainIndex = 0;
 
   readonly items: MenuItem[] = [
-    { label: 'Spiel starten', action: () => this.router.navigate(['/game']) },
+    { label: 'Spiel starten', action: () => this.open('play') },
     { label: 'Einstellungen', action: () => this.open('settings') },
     { label: 'Nutzungsbedingungen', action: () => this.open('terms') },
     { label: 'Spiel beenden', action: () => this.open('quit') },
@@ -48,6 +48,12 @@ export class Menu {
     { kind: 'action', label: 'Zurück', run: () => this.closePanel() },
   ];
 
+  private readonly playRows: Row[] = [
+    { kind: 'action', label: 'Lokal', run: () => this.router.navigate(['/game']) },
+    { kind: 'action', label: 'Online', run: () => this.router.navigate(['/lobby']) },
+    { kind: 'action', label: 'Zurück', run: () => this.closePanel() },
+  ];
+
   private readonly termsRows: Row[] = [
     { kind: 'action', label: 'Zurück', run: () => this.closePanel() },
   ];
@@ -60,6 +66,8 @@ export class Menu {
   // Einträge der geöffneten Unterseite
   rows = computed<Row[]>(() => {
     switch (this.panel()) {
+      case 'play':
+        return this.playRows;
       case 'settings':
         return this.settingRows;
       case 'terms':
@@ -73,6 +81,8 @@ export class Menu {
 
   heading = computed(() => {
     switch (this.panel()) {
+      case 'play':
+        return 'Spiel starten';
       case 'settings':
         return 'Einstellungen';
       case 'terms':

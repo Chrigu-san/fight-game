@@ -15,6 +15,17 @@ export class Keyboard {
       if (BLOCK_DEFAULT.has(e.code)) e.preventDefault();
     });
     window.addEventListener('keyup', (e) => this.held.delete(e.code));
+    // Maustasten laufen über dieselben Sets, als "MouseLeft" und "MouseRight"
+    window.addEventListener('mousedown', (e) => {
+      const code = mouseCode(e.button);
+      if (!code) return;
+      this.pressed.add(code);
+      this.held.add(code);
+    });
+    window.addEventListener('mouseup', (e) => {
+      const code = mouseCode(e.button);
+      if (code) this.held.delete(code);
+    });
     // Ohne das läuft eine Figur weiter, wenn man mit gehaltener Taste das Fenster wechselt
     window.addEventListener('blur', () => this.held.clear());
   }
@@ -31,4 +42,8 @@ export class Keyboard {
   endFrame() {
     this.pressed.clear();
   }
+}
+
+function mouseCode(button: number): string | null {
+  return button === 0 ? 'MouseLeft' : button === 2 ? 'MouseRight' : null;
 }

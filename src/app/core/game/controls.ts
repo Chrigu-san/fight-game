@@ -30,6 +30,16 @@ export const KEYS_P2: KeyMap = {
   dash: ['Slash', 'Numpad2'],
 };
 
+// Online spielt jeder an seinem eigenen PC, darum Maus für Schlag und Block
+export const KEYS_ONLINE: KeyMap = {
+  left: ['KeyA', 'ArrowLeft'],
+  right: ['KeyD', 'ArrowRight'],
+  jump: ['KeyW', 'Space', 'ArrowUp'],
+  block: ['MouseRight'],
+  attack: ['MouseLeft'],
+  dash: ['ShiftLeft', 'ShiftRight'],
+};
+
 // Laufen und Blocken zählen, solange die Taste gehalten wird; der Rest nur einmal pro Druck
 export function readControls(keyboard: Keyboard, keys: KeyMap): PlayerControls {
   return {

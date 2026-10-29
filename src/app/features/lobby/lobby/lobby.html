@@ -1,1 +1,80 @@
-<p>lobby works!</p>
+<div class="vignette"></div>
+
+<main class="lobby">
+  <h1>Online-Lobby</h1>
+  <img class="divider" src="assets/images/ui/divider.svg" alt="" />
+
+  @switch (online.status()) {
+    @case ('online') {
+      <p class="me">Du kämpfst als <strong>{{ online.name() }}</strong></p>
+
+      @if (online.incoming(); as challenger) {
+        <section class="challenge">
+          <p><strong>{{ challenger.name }}</strong> fordert dich heraus!</p>
+          <div class="actions">
+            <button type="button" class="action" (click)="online.respond(true)">Annehmen</button>
+            <button type="button" class="action" (click)="online.respond(false)">Ablehnen</button>
+          </div>
+        </section>
+      }
+
+      @if (online.outgoing(); as targetId) {
+        <section class="challenge waiting">
+          <p>Warte auf Antwort von <strong>{{ online.nameOf(targetId) }}</strong> …</p>
+          <div class="actions">
+            <button type="button" class="action" (click)="online.cancelChallenge()">Abbrechen</button>
+          </div>
+        </section>
+      }
+
+      <ul class="players">
+        @for (p of online.others(); track p.id) {
+          <li class="player" [class.busy]="p.status === 'fighting'">
+            <img class="fleur" src="assets/images/ui/menu-fleur.svg" alt="" />
+            <span class="name">{{ p.name }}</span>
+            @if (p.status === 'fighting') {
+              <span class="status">im Kampf</span>
+            } @else {
+              <button
+                type="button"
+                class="action"
+                [disabled]="!!online.outgoing() || !!online.incoming()"
+                (click)="online.challenge(p.id)"
+              >
+                Herausfordern
+              </button>
+            }
+          </li>
+        } @empty {
+          <li class="empty">Noch niemand da. Zum Testen das Spiel in einem zweiten Tab öffnen.</li>
+        }
+      </ul>
+    }
+
+    @case ('connecting') {
+      <p class="message">Verbinde mit dem Server …</p>
+    }
+
+    @default {
+      <form class="join" (submit)="join($event)">
+        <label for="name">Dein Name</label>
+        <input
+          id="name"
+          type="text"
+          maxlength="16"
+          autocomplete="off"
+          placeholder="Ritter"
+          [value]="nameInput()"
+          (input)="setName($event)"
+        />
+        <button type="submit" class="action">Beitreten</button>
+      </form>
+    }
+  }
+
+  @if (online.notice()) {
+    <p class="notice">{{ online.notice() }}</p>
+  }
+
+  <button type="button" class="action back" (click)="back()">Zurück zum Menü</button>
+</main>

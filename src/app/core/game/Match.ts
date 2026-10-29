@@ -9,7 +9,11 @@ export interface MatchView {
   timeLeft: number;
   winner: 1 | 2 | null; // null bei Unentschieden oder solange gekämpft wird
   showFightBanner: boolean;
+  hits: number; // Anzahl Treffer bisher, z.B. für Bildschirmwackeln
 }
+
+// Feste Breite der Arena in Spiel-Pixeln; die Anzeige skaliert sie auf die Fensterbreite
+export const STAGE_WIDTH = 1280;
 
 const ROUND_TIME = 99;
 const COUNTDOWN_TIME = 1.2;
@@ -26,7 +30,10 @@ export class Match {
   private winner: 1 | 2 | null = null;
   private hitCount = 0;
 
-  constructor(private stageWidth: number) {
+  private stageWidth: number;
+
+  constructor(stageWidth = STAGE_WIDTH) {
+    this.stageWidth = stageWidth;
     this.players = [new Player(0, 'right'), new Player(0, 'left')];
     this.reset();
   }
@@ -73,8 +80,6 @@ export class Match {
 
     p1.update(dt, fighting ? controls1 : NO_CONTROLS, this.stageWidth);
     p2.update(dt, fighting ? controls2 : NO_CONTROLS, this.stageWidth);
-    p1.faceTowards(p2.getCenterX());
-    p2.faceTowards(p1.getCenterX());
     this.separate(p1, p2);
 
     if (this.phase === 'countdown') {
@@ -109,6 +114,7 @@ export class Match {
       timeLeft: Math.ceil(this.timeLeft),
       winner: this.winner,
       showFightBanner: this.phase === 'fight' && this.fightTime < FIGHT_BANNER_TIME,
+      hits: this.hitCount,
     };
   }
 

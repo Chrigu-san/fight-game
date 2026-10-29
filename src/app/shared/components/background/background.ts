@@ -16,8 +16,9 @@ export class Background {
       case '/menu':
         return 'url(/assets/images/backgrounds/menu-background.png)';
       case '/lobby':
-        return 'url(/assets/images/backgrounds/lobby-background.png)';
+        return 'url(/assets/images/backgrounds/menu-background.png)';
       case '/game':
+      case '/online':
         return 'url(/assets/images/backgrounds/game-background.png)';
       default:
         return 'url(/assets/images/backgrounds/default-background.png)';
