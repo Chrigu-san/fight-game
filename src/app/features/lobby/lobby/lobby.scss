@@ -1,6 +1,7 @@
 $text: #f2f0ea;
 $text-dim: rgba(242, 240, 234, 0.55);
 $glow: rgba(200, 220, 255, 0.55);
+$gold: #ffd27a;
 
 :host {
   position: fixed;
@@ -9,6 +10,167 @@ $glow: rgba(200, 220, 255, 0.55);
   font-family: 'Cinzel', 'Trajan Pro', Georgia, serif;
   color: $text;
 }
+
+kbd {
+  display: inline-block;
+  min-width: 1.4em;
+  margin-right: 0.35em;
+  padding: 0.05em 0.35em;
+  border: 1px solid rgba(242, 240, 234, 0.6);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 0.85em;
+  text-align: center;
+  color: $text;
+}
+
+// ---- Begehbare Halle ----
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.world {
+  position: absolute;
+  left: 0;
+  height: 0;
+  transform-origin: 0 100%;
+}
+
+// Hinweis über dem Ritter, den man herausfordern kann
+.prompt {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 0.35rem 0.8rem;
+  background: rgba(6, 8, 14, 0.85);
+  border: 1px solid rgba($gold, 0.7);
+  box-shadow: 0 0 16px rgba(255, 180, 80, 0.3);
+  color: $text;
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  cursor: pointer;
+  animation: prompt-in 0.2s ease-out both;
+
+  &:hover {
+    border-color: $gold;
+  }
+}
+
+@keyframes prompt-in {
+  from {
+    opacity: 0;
+    margin-bottom: -6px;
+  }
+}
+
+.hud {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  pointer-events: none;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-shadow:
+      0 0 18px $glow,
+      0 0 40px rgba(120, 150, 220, 0.3);
+  }
+
+  p {
+    margin: 0.2rem 0 0;
+    color: $text-dim;
+    letter-spacing: 0.05em;
+  }
+}
+
+.fighting {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  max-width: 40vw;
+  justify-content: flex-end;
+  color: $text-dim;
+  font-size: 0.9rem;
+
+  .name {
+    color: $text;
+  }
+}
+
+.challenge {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  width: min(calc(100% - 32px), 460px);
+  transform: translateX(-50%);
+  padding: 1rem 1.2rem;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid rgba($gold, 0.6);
+  background: rgba(6, 8, 14, 0.88);
+  box-shadow: 0 0 28px rgba(255, 180, 90, 0.25);
+  animation: fade-in 0.3s ease-out both;
+
+  p {
+    margin: 0 0 0.7rem;
+    font-size: 1.1rem;
+  }
+
+  &.waiting {
+    border-color: rgba(242, 240, 234, 0.4);
+    box-shadow: 0 0 24px rgba(120, 150, 220, 0.15);
+  }
+}
+
+.notice,
+.empty {
+  position: absolute;
+  top: 34%;
+  left: 16px;
+  right: 16px;
+  margin: 0;
+  text-align: center;
+  color: $text-dim;
+  pointer-events: none;
+}
+
+.notice {
+  top: 12%;
+  color: #f2c48a;
+}
+
+.controls {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.3rem 1.5rem;
+  font-family: Georgia, serif;
+  font-size: 0.8rem;
+  color: rgba(242, 240, 234, 0.55);
+
+  b {
+    color: $text;
+  }
+}
+
+// ---- Namenseingabe vor dem Beitreten ----
 
 .vignette {
   position: absolute;
@@ -19,8 +181,7 @@ $glow: rgba(200, 220, 255, 0.55);
     linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 35%);
 }
 
-// Gleiche linke Spalte wie das Hauptmenü
-.lobby {
+.join-screen {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -37,28 +198,28 @@ $glow: rgba(200, 220, 255, 0.55);
   @media (max-width: 800px) {
     width: 100%;
   }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+    text-shadow:
+      0 0 18px $glow,
+      0 0 40px rgba(120, 150, 220, 0.3);
+  }
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translate(var(--fade-x, 0), 12px);
   }
 }
 
-h1 {
-  margin: 0;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-align: center;
-  text-shadow:
-    0 0 18px $glow,
-    0 0 40px rgba(120, 150, 220, 0.3);
+.challenge {
+  --fade-x: -50%;
 }
 
 .divider {
@@ -68,89 +229,15 @@ h1 {
   filter: drop-shadow(0 0 6px $glow);
 }
 
-.me,
-.message,
-.notice {
-  margin: 0 0 1.2rem;
+.message {
+  margin: 0 0 1rem;
   text-align: center;
   color: $text-dim;
-  letter-spacing: 0.05em;
 
-  strong {
-    color: $text;
+  &.notice-text {
+    margin-top: 1.2rem;
+    color: #f2c48a;
   }
-}
-
-.notice {
-  margin-top: 1.2rem;
-  color: #f2c48a;
-}
-
-.challenge {
-  width: min(100%, 460px);
-  margin-bottom: 1.4rem;
-  padding: 1rem 1.2rem;
-  text-align: center;
-  border: 1px solid rgba(242, 240, 234, 0.45);
-  background: rgba(6, 8, 14, 0.75);
-  box-shadow: 0 0 24px rgba(255, 180, 90, 0.15);
-  animation: fade-in 0.3s ease-out both;
-
-  p {
-    margin: 0 0 0.6rem;
-  }
-
-  &.waiting {
-    box-shadow: 0 0 24px rgba(120, 150, 220, 0.15);
-  }
-}
-
-.players {
-  width: min(100%, 520px);
-  max-height: 46vh;
-  overflow-y: auto;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.player {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.55rem 0.4rem;
-  border-bottom: 1px solid rgba(242, 240, 234, 0.12);
-  font-size: 1.15rem;
-
-  .fleur {
-    width: 34px;
-    opacity: 0.7;
-    filter: drop-shadow(0 0 4px $glow);
-  }
-
-  .name {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .status {
-    font-size: 0.9rem;
-    color: $text-dim;
-  }
-
-  &.busy .name {
-    color: $text-dim;
-  }
-}
-
-.empty {
-  padding: 1rem 0;
-  text-align: center;
-  color: $text-dim;
-  font-family: Georgia, serif;
 }
 
 .join {
@@ -201,16 +288,16 @@ h1 {
     color 0.2s,
     text-shadow 0.2s;
 
-  &:hover:not(:disabled),
+  &:hover,
   &:focus-visible {
     outline: none;
     color: $text;
     text-shadow: 0 0 12px $glow;
   }
 
-  &:disabled {
-    opacity: 0.35;
-    cursor: default;
+  &.small {
+    font-family: Georgia, serif;
+    font-size: 0.8rem;
   }
 }
 

@@ -2,6 +2,7 @@ import { Component, HostListener, NgZone, OnDestroy, OnInit, computed, inject, s
 import { ActivatedRoute, Router } from '@angular/router';
 import { Ground } from '../../../shared/components/ground/ground';
 import { Healthbar } from '../../../shared/components/healthbar/healthbar';
+import { Fighter, FighterColor } from '../../../shared/components/fighter/fighter';
 import { GameState } from '../../../core/services/game-state';
 import { Keyboard } from '../../../core/services/keyboard';
 import { Online } from '../../../core/services/online';
@@ -14,7 +15,7 @@ const SHAKE_TIME_MS = 180;
 
 @Component({
   selector: 'app-game',
-  imports: [Ground, Healthbar],
+  imports: [Ground, Healthbar, Fighter],
   templateUrl: './game.html',
   styleUrl: './game.scss',
 })
@@ -47,6 +48,16 @@ export class Game implements OnInit, OnDestroy {
   private accumulator = 0;
   private lastHits = 0;
   private shakeTimeout?: ReturnType<typeof setTimeout>;
+
+  fighterLabel(index: number): string {
+    if (this.mode === 'local') return `P${index + 1}`;
+    return this.online.slot() === index ? 'Du' : this.names()[index];
+  }
+
+  fighterColor(index: number): FighterColor {
+    if (this.mode === 'online' && this.online.slot() === index) return 'me';
+    return index === 0 ? 'p1' : 'p2';
+  }
 
   ngOnInit() {
     if (this.mode === 'online' && !this.online.inMatch()) {

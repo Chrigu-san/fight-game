@@ -1,6 +1,6 @@
 // Nachrichten zwischen Browser und WebSocket-Server. Wird von beiden Seiten importiert.
 import type { MatchView } from './Match';
-import type { PlayerControls } from './Player';
+import type { Facing, PlayerControls } from './Player';
 
 export const SERVER_PORT = 3000;
 
@@ -10,6 +10,14 @@ export interface LobbyPlayer {
   status: 'idle' | 'fighting';
 }
 
+// Position eines Ritters in der begehbaren Lobby
+export interface LobbyPosition {
+  x: number;
+  y: number;
+  facing: Facing;
+  moving: boolean;
+}
+
 // Browser -> Server
 export type ClientMessage =
   | { type: 'join'; name: string }
@@ -17,12 +25,14 @@ export type ClientMessage =
   | { type: 'cancelChallenge' }
   | { type: 'respond'; from: string; accept: boolean }
   | { type: 'input'; controls: PlayerControls }
-  | { type: 'leaveMatch' };
+  | { type: 'leaveMatch' }
+  | ({ type: 'lobbyMove' } & LobbyPosition);
 
 // Server -> Browser
 export type ServerMessage =
-  | { type: 'welcome'; id: string; name: string }
+  | { type: 'welcome'; id: string; name: string; x: number }
   | { type: 'lobby'; players: LobbyPlayer[] }
+  | { type: 'lobbyState'; positions: ({ id: string } & LobbyPosition)[] }
   | { type: 'challenged'; from: LobbyPlayer }
   | { type: 'challengeCancelled'; from: string }
   | { type: 'challengeDeclined'; by: string }

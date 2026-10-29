@@ -6,6 +6,7 @@ import {
   SERVER_PORT,
   type ClientMessage,
   type LobbyPlayer,
+  type LobbyPosition,
   type ServerMessage,
 } from '../game/protocol';
 
@@ -24,6 +25,9 @@ export class Online {
   name = signal(loadName());
   players = signal<LobbyPlayer[]>([]);
   others = computed(() => this.players().filter((p) => p.id !== this.myId()));
+  fighting = computed(() => this.others().filter((p) => p.status === 'fighting'));
+  positions = signal<({ id: string } & LobbyPosition)[]>([]); // Ritter in der begehbaren Lobby
+  spawnX = 0;
 
   incoming = signal<LobbyPlayer | null>(null); // wer mich gerade herausfordert
   outgoing = signal<string | null>(null); // wen ich herausgefordert habe (id)
@@ -80,6 +84,10 @@ export class Online {
     this.send({ type: 'respond', from: from.id, accept });
   }
 
+  sendLobbyMove(pos: LobbyPosition) {
+    if (this.status() === 'online' && !this.inMatch()) this.send({ type: 'lobbyMove', ...pos });
+  }
+
   sendInput(controls: PlayerControls) {
     if (this.inMatch()) this.send({ type: 'input', controls });
   }
@@ -98,10 +106,14 @@ export class Online {
       case 'welcome':
         this.myId.set(msg.id);
         this.name.set(msg.name);
+        this.spawnX = msg.x;
         this.status.set('online');
         break;
       case 'lobby':
         this.players.set(msg.players);
+        break;
+      case 'lobbyState':
+        this.positions.set(msg.positions);
         break;
       case 'challenged':
         this.incoming.set(msg.from);
@@ -157,6 +169,7 @@ export class Online {
     this.socket = null;
     this.myId.set(null);
     this.players.set([]);
+    this.positions.set([]);
     this.incoming.set(null);
     this.outgoing.set(null);
     this.inMatch.set(false);

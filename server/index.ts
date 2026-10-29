@@ -1,18 +1,21 @@
 // WebSocket-Server: Lobby, Herausforderungen und die Online-Kämpfe.
 // Der Server rechnet die Spiellogik (gleiche Klassen wie im Browser), die Browser schicken nur ihre Eingaben.
 import { WebSocket, WebSocketServer } from 'ws';
-import { Match } from '../src/app/core/game/Match';
+import { Match, STAGE_WIDTH } from '../src/app/core/game/Match';
 import { NO_CONTROLS, type PlayerControls } from '../src/app/core/game/Player';
 import {
   SERVER_PORT,
   type ClientMessage,
   type LobbyPlayer,
+  type LobbyPosition,
   type ServerMessage,
 } from '../src/app/core/game/protocol';
 
 const STEP = 1 / 60;
 const END_DELAY = 4; // Sekunden nach K.O., bis beide zurück in der Lobby sind
 const MAX_NAME_LENGTH = 16;
+const LOBBY_SEND_INTERVAL = 0.05; // Lobby-Positionen 20x pro Sekunde verschicken
+const PLAYER_WIDTH = 64;
 
 interface Client {
   id: string;
@@ -20,6 +23,7 @@ interface Client {
   ws: WebSocket;
   challengeTo: string | null;
   room: Room | null;
+  pos: LobbyPosition; // wo der Ritter in der Lobby steht
 }
 
 interface Room {
@@ -38,7 +42,14 @@ const wss = new WebSocketServer({ port });
 console.log(`Yahu Arena Server läuft auf ws://localhost:${port}`);
 
 wss.on('connection', (ws) => {
-  const client: Client = { id: String(nextId++), name: null, ws, challengeTo: null, room: null };
+  const client: Client = {
+    id: String(nextId++),
+    name: null,
+    ws,
+    challengeTo: null,
+    room: null,
+    pos: { x: 200 + Math.random() * (STAGE_WIDTH - 400), y: 0, facing: 'right', moving: false },
+  };
   clients.set(client.id, client);
 
   ws.on('message', (data) => {
@@ -57,7 +68,7 @@ function handle(client: Client, msg: ClientMessage) {
   switch (msg.type) {
     case 'join': {
       client.name = cleanName(msg.name, client.id);
-      send(client, { type: 'welcome', id: client.id, name: client.name });
+      send(client, { type: 'welcome', id: client.id, name: client.name, x: client.pos.x });
       broadcastLobby();
       break;
     }
@@ -104,6 +115,17 @@ function handle(client: Client, msg: ClientMessage) {
     case 'leaveMatch':
       if (client.room) endRoom(client.room, client);
       break;
+    case 'lobbyMove': {
+      // In der Lobby bestimmt jeder Browser seine eigene Position, der Server prüft nur die Grenzen
+      if (!client.name || client.room) return;
+      client.pos = {
+        x: clamp(Number(msg.x) || 0, 0, STAGE_WIDTH - PLAYER_WIDTH),
+        y: clamp(Number(msg.y) || 0, 0, 1000),
+        facing: msg.facing === 'left' ? 'left' : 'right',
+        moving: !!msg.moving,
+      };
+      break;
+    }
   }
 }
 
@@ -169,6 +191,19 @@ function cleanName(name: unknown, id: string): string {
   return clean || `Ritter ${id}`;
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function broadcastLobbyPositions() {
+  const inLobby = [...clients.values()].filter((c) => c.name && !c.room);
+  const msg: ServerMessage = {
+    type: 'lobbyState',
+    positions: inLobby.map((c) => ({ id: c.id, ...c.pos })),
+  };
+  inLobby.forEach((c) => send(c, msg));
+}
+
 function lobbyPlayers(): LobbyPlayer[] {
   return [...clients.values()]
     .filter((c) => c.name)
@@ -189,11 +224,19 @@ function send(client: Client, msg: ServerMessage) {
 // Spielschleife mit fester Schrittweite; setInterval ist unter Windows ungenau, darum mit Zeitkonto
 let last = performance.now();
 let accumulator = 0;
+let lobbyTimer = 0;
 setInterval(() => {
   const now = performance.now();
-  accumulator += Math.min(0.25, (now - last) / 1000);
+  const elapsed = Math.min(0.25, (now - last) / 1000);
+  accumulator += elapsed;
   last = now;
   let stepped = false;
+
+  lobbyTimer += elapsed;
+  if (lobbyTimer >= LOBBY_SEND_INTERVAL) {
+    lobbyTimer = 0;
+    broadcastLobbyPositions();
+  }
 
   while (accumulator >= STEP) {
     accumulator -= STEP;

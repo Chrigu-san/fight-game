@@ -40,6 +40,9 @@ export const KEYS_ONLINE: KeyMap = {
   dash: ['ShiftLeft', 'ShiftRight'],
 };
 
+// In der Lobby wird nur gelaufen, gesprungen und gedasht
+export const KEYS_LOBBY: KeyMap = { ...KEYS_ONLINE, attack: [], block: [] };
+
 // Laufen und Blocken zählen, solange die Taste gehalten wird; der Rest nur einmal pro Druck
 export function readControls(keyboard: Keyboard, keys: KeyMap): PlayerControls {
   return {

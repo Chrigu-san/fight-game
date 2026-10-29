@@ -10,6 +10,8 @@ export class Keyboard {
 
   constructor() {
     window.addEventListener('keydown', (e) => {
+      // Beim Tippen in ein Textfeld zählt die Taste nicht fürs Spiel
+      if (isTyping(e.target)) return;
       if (!e.repeat) this.pressed.add(e.code);
       this.held.add(e.code);
       if (BLOCK_DEFAULT.has(e.code)) e.preventDefault();
@@ -42,6 +44,10 @@ export class Keyboard {
   endFrame() {
     this.pressed.clear();
   }
+}
+
+function isTyping(target: EventTarget | null): boolean {
+  return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
 }
 
 function mouseCode(button: number): string | null {

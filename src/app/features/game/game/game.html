@@ -9,30 +9,7 @@
     [style.transform]="'scale(' + scale() + ')'"
   >
     @for (p of view().players; track $index) {
-      <div
-        class="fighter"
-        [class.p2]="$index === 1"
-        [class.attacking]="p.attacking"
-        [class.blocking]="p.blocking"
-        [class.dashing]="p.dashing"
-        [class.hurt]="p.hurt"
-        [class.dead]="p.dead"
-        [style.left.px]="p.x"
-        [style.bottom.px]="p.y"
-        [style.width.px]="p.width"
-        [style.height.px]="p.height"
-        [style.--dir]="p.facing === 'left' ? -1 : 1"
-      >
-        <span class="tag" [class.me]="mode === 'online' && online.slot() === $index">
-          @if (mode === 'online') {
-            {{ online.slot() === $index ? 'Du' : names()[$index] }}
-          } @else {
-            P{{ $index + 1 }}
-          }
-        </span>
-        <img class="sprite" src="/assets/images/sprites/knight.svg" alt="" />
-        <span class="shadow" [style.bottom.px]="-p.y"></span>
-      </div>
+      <app-fighter [player]="p" [label]="fighterLabel($index)" [color]="fighterColor($index)" />
 
       @if (p.attackBox; as box) {
         <div

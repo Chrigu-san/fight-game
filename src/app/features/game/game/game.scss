@@ -1,8 +1,6 @@
 $text: #f2f0ea;
 $text-dim: rgba(242, 240, 234, 0.55);
 $glow: rgba(200, 220, 255, 0.55);
-$p1: #e2533f;
-$p2: #4f8fe8;
 
 :host {
   position: fixed;
@@ -43,87 +41,6 @@ $p2: #4f8fe8;
   left: 0;
   height: 0;
   transform-origin: 0 100%;
-}
-
-// Die Box ist die Trefferzone, das Bild ist etwas breiter und steht unten in der Mitte
-.fighter {
-  position: absolute;
-  --dir: 1;
-
-  .sprite {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 104px;
-    height: 196px;
-    image-rendering: pixelated;
-    transform-origin: 50% 100%;
-    transform: translateX(-50%) scaleX(var(--dir));
-    transition:
-      transform 0.08s,
-      filter 0.08s;
-  }
-
-  .tag {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 26px);
-    transform: translateX(-50%);
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: $p1;
-    text-shadow: 0 0 8px rgba($p1, 0.7);
-    white-space: nowrap;
-  }
-
-  .shadow {
-    position: absolute;
-    left: 50%;
-    width: 90px;
-    height: 14px;
-    transform: translate(-50%, 50%);
-    border-radius: 50%;
-    background: radial-gradient(rgba($p1, 0.45), transparent 70%);
-  }
-
-  &.p2 {
-    .tag {
-      color: $p2;
-      text-shadow: 0 0 8px rgba($p2, 0.7);
-    }
-
-    .shadow {
-      background: radial-gradient(rgba($p2, 0.45), transparent 70%);
-    }
-  }
-
-  .tag.me {
-    color: #ffd27a;
-    text-shadow: 0 0 8px rgba(255, 180, 80, 0.7);
-  }
-
-  &.attacking .sprite {
-    transform: translateX(-50%) scaleX(var(--dir)) rotate(8deg);
-  }
-
-  &.blocking .sprite {
-    filter: drop-shadow(0 0 10px #8fbaff) brightness(1.1);
-  }
-
-  &.dashing .sprite {
-    opacity: 0.75;
-    transform: translateX(-50%) scaleX(var(--dir)) skewX(-12deg);
-  }
-
-  &.hurt .sprite {
-    filter: brightness(1.8) sepia(1) saturate(6) hue-rotate(-40deg);
-  }
-
-  &.dead .sprite {
-    transition: transform 0.4s ease-in;
-    transform: translateX(-50%) scaleX(var(--dir)) rotate(-90deg);
-  }
 }
 
 // Schwertschlag als heller Bogen in Blickrichtung
